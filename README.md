@@ -19,7 +19,7 @@ Default deployment is executed on the localhost and can take up to 30 minutes!!,
 
 ```bash
 cd nemesis-server-main
-ansible-playbook nemesis_server.yml
+sudo ansible-playbook nemesis_server.yml
 ```
 
 ![Screenshot1](deployment_part1.png)
