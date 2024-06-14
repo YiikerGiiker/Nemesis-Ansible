@@ -1,0 +1,36 @@
+- name: Install k3s if not already installed
+  become: true
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.shell: >
+    set -o pipefail && curl -sfL https://get.k3s.io | sh -
+  args:
+    creates: /usr/local/bin/k3s
+
+- name: Set KUBECONFIG environment variable
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.set_fact:
+    kubeconfig_path: "/home/{{ nemesis_server_username }}/.kube/config"
+
+- name: Create ~/.kube directory if not exists
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.file:
+    path: "/home/{{ nemesis_server_username }}/.kube"
+    state: directory
+    mode: "0744"
+    owner: "{{ nemesis_server_username }}"
+
+- name: Get k3s kubectl config and save to KUBECONFIG
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.command: "sudo k3s kubectl config view --raw"
+  register: kubectl_config
+  changed_when: false
+
+- name: Save kubectl config to KUBECONFIG file
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.copy:
+    content: "{{ kubectl_config.stdout }}"
+    dest: "{{ kubeconfig_path }}"
+    owner: "{{ nemesis_server_username }}"
+    group: "{{ nemesis_server_username }}"
+    mode: "0600"
+  when: kubectl_config.stdout != ""

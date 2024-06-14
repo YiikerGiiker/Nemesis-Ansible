@@ -1,0 +1,7 @@
+---
+- name: Configure Server
+  hosts: localhost
+  vars:
+    ansible_shell_executable: "/bin/bash"
+  roles:
+    - nemesis_server

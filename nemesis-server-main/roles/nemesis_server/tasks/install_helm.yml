@@ -1,0 +1,35 @@
+---
+- name: Update and upgrade all packages to the latest version
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+    cache_valid_time: 3600
+
+- name: Install required packages
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+
+# https://helm.sh/docs/intro/install/
+- name: Add Helm Module Repository
+  ansible.builtin.deb822_repository:
+    name: helm
+    types: [deb]
+    uris: "https://baltocdn.com/helm/stable/debian/"
+    signed_by: "https://baltocdn.com/helm/signing.asc"
+    components: main
+    suites: all
+    state: present
+    enabled: true
+
+- name: Update APT cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install Helm
+  ansible.builtin.apt:
+    name: helm
+    state: present
+    update_cache: true

@@ -1,0 +1,26 @@
+---
+- name: Verify Helm list
+  become: true
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.command: helm list -A
+  register: quickstart_check
+  changed_when: false
+
+- name: Write user input to file
+  become: true
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.template:
+    src: nemesis-values.yaml.j2
+    dest: /home/{{ nemesis_server_username }}/nemesis-values.yaml
+    mode: '0644'
+
+- name: Run nemesis helm chart
+  become: true
+  become_user: "{{ nemesis_server_username }}"
+  ansible.builtin.command:
+    helm install
+    --repo https://specterops.github.io/Nemesis/
+    nemesis nemesis --timeout '45m'
+    -f /home/{{ nemesis_server_username }}/nemesis-values.yaml
+  when: "'nemesis-1.0.1' not in quickstart_check.stdout"
+  changed_when: "'nemesis-1.0.1' not in quickstart_check.stdout"

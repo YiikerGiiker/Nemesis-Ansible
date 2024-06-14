@@ -1,0 +1,13 @@
+---
+# potential improvement: pin versions in defaults
+- name: Install k3s
+  ansible.builtin.include_tasks: install_k3s.yml
+
+- name: Install Helm
+  ansible.builtin.include_tasks: install_helm.yml
+
+- name: Install quickstart
+  ansible.builtin.include_tasks: install_quickstart.yml
+
+- name: Install Nemesis
+  ansible.builtin.include_tasks: install_nemesis.yml

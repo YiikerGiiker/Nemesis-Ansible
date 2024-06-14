@@ -1,0 +1,3 @@
+---
+- name: "Configure server"
+  import_playbook: nemesis_server.yml
